@@ -1,10 +1,10 @@
 let slime, floor;
 let platforms, platform1, platform2;
-let ladders, ladder1part1;
+let ladders, ladder1;
 
 function preload() {
 	slimeSheet = loadImage('slimeSheet.png');
-	yellowLadder = loadImage('Land_Objects/Sprites/Ladder_Type2_Yellow.png')
+	ladder = loadImage('ladder.png')
 }
 
 function setup() {
@@ -42,12 +42,12 @@ function setup() {
 	platform2 = new platforms.Sprite(1500, 905, 100, 25);
 
 	ladders = new Group();
-	ladders.collider = 'static';
-	ladders.w = 32;
-	ladders.h = 32;
-	// ladders.image = yellowLadder;
+	ladders.collider = 'kinematic';
+	ladders.w = 45;
+	ladders.h = 144;
+	ladders.image = ladder;
 
-	ladder1part1 = new ladders.Sprite(32, 32, 1621, 844);
+	ladder1 = new ladders.Sprite(1680, 800, 2, 144);
 
   	world.gravity.y = 10;
 }
@@ -59,6 +59,7 @@ function draw() {
 	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}`, 10, 30);
 	
 	slime.debug = mouse.pressing();
+	ladder1.debug = mouse.pressing();
 
 	// if (mouse.presses()) {
 	// 	slime.speed = 10;
@@ -71,14 +72,32 @@ function draw() {
 		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
 			slime.vel.y = -5; 
 		} 
+		if (slime.colliding(ladder1)) {
+			world.gravity.y = 0;
+			slime.vel.y = 0;
+			slime.vel.x = 0;
+		}
 	} else if (kb.pressing('right') || kb.pressing('d')) {
 		slime.changeAni('right');
 		slime.vel.x = 5;
 		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
 			slime.vel.y = -5; 
 		}
+		if (slime.colliding(ladder1)) {
+			world.gravity.y = 0;
+			slime.vel.y = 0;
+			slime.vel.x = 0;
+		}
 	} else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
 		slime.vel.y = -5; 
+	} else if (slime.colliding(ladder1)) {
+		// world.gravity.y = 0;
+		slime.vel.y = 0;
+		slime.vel.x = 0;
+		if (kb.pressing('up') || kb.pressing('w') || kb.pressing('space')) {
+			// world.gravity.y = 10;
+			slime.vel.y = -3;
+		}
 	} else {
 		slime.changeAni('idle');
 		slime.vel.x = 0;
