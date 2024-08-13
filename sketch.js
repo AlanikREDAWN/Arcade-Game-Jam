@@ -1,14 +1,16 @@
 let slime, floor;
+let platforms, platform1, platform2;
+let ladders, ladder1part1;
 
 function preload() {
 	slimeSheet = loadImage('slimeSheet.png');
+	yellowLadder = loadImage('Land_Objects/Sprites/Ladder_Type2_Yellow.png')
 }
 
 function setup() {
-	new Canvas(500, 500);
+	new Canvas(1920, 1080, 'fullscreen');
 
-	slime = new Sprite();
-	slime.diameter = 64;
+	slime = new Sprite(940, 980, 64);
 	slime.spriteSheet = slimeSheet;
 	slime.friction = 0;
 	
@@ -19,21 +21,42 @@ function setup() {
 	});
 	slime.changeAni('idle');
 	
-	floor = new Sprite();
-	floor.y = 400;
-	floor.w = 500;
-	floor.h = 50;
+	floor = new Sprite(1920/2, 1080 - 50/2, 1920, 50);
 	floor.collider = 'static';
 	floor.stroke = '#3B8E7A'
 	floor.color = '#00C2AE';
 	floor.strokeWeight = 5;
 
+	platforms = new Group();
+	platforms.collider = 'static';
+	// platforms.stroke = '#3B8E7A';
+	// platforms.stroke = '#4336C8';
+	platforms.stroke = '#20036A';
+	// platforms.color = '#00C2AE';
+	// platforms.color = '#20036A';
+	platforms.color = '#4336C8';
+	platforms.strokeWeight = 5;
 
-  world.gravity.y = 10;
+	platform1 = new platforms.Sprite(1300, 960, 100, 25);
+
+	platform2 = new platforms.Sprite(1500, 905, 100, 25);
+
+	ladders = new Group();
+	ladders.collider = 'static';
+	ladders.w = 32;
+	ladders.h = 32;
+	// ladders.image = yellowLadder;
+
+	ladder1part1 = new ladders.Sprite(32, 32, 1621, 844);
+
+  	world.gravity.y = 10;
 }
 
 function draw() {
 	background('skyblue');
+
+	textSize(20);
+	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}`, 10, 30);
 	
 	slime.debug = mouse.pressing();
 
@@ -44,12 +67,18 @@ function draw() {
 	
 	if (kb.pressing('left') || kb.pressing('a')) {
 		slime.changeAni('left');
-		slime.vel.x = -2;
+		slime.vel.x = -5;
+		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+			slime.vel.y = -5; 
+		} 
 	} else if (kb.pressing('right') || kb.pressing('d')) {
 		slime.changeAni('right');
-		slime.vel.x = 2;
-	} else if (kb.presses('up') || kb.presses('w') || kb.presses('space')){
-		slime.vel.y = -3;
+		slime.vel.x = 5;
+		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+			slime.vel.y = -5; 
+		}
+	} else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+		slime.vel.y = -5; 
 	} else {
 		slime.changeAni('idle');
 		slime.vel.x = 0;
