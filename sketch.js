@@ -1,6 +1,8 @@
 let slime, floor;
 let platforms, platform1, platform2;
 let ladders, ladder1;
+let pressedKeys = {};
+let slimeSpeed = 5;
 
 function preload() {
 	slimeSheet = loadImage('slimeSheet.png');
@@ -13,7 +15,7 @@ function setup() {
 	slime = new Sprite(940, 980, 64);
 	slime.spriteSheet = slimeSheet;
 	slime.friction = 0;
-	
+
 	slime.addAnis({
 		left: { row: 0, frameSize: [64, 64], frames: 8 },
 		right: { row: 1, frameSize: [64, 64], frames: 8 },
@@ -52,11 +54,19 @@ function setup() {
   	world.gravity.y = 10;
 }
 
+// class Slime {
+// 	constructor(x, y){
+// 		this.x = x;
+// 		this.y = y;
+		
+// 	}
+// }
+
 function draw() {
 	background('skyblue');
 
 	textSize(20);
-	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}`, 10, 30);
+	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}\n${pressedKeys}`, 10, 30);
 	
 	slime.debug = mouse.pressing();
 	ladder1.debug = mouse.pressing();
@@ -66,38 +76,44 @@ function draw() {
 	// 	slime.moveTo(mouse);
 	// }
 	
-	if (kb.pressing('left') || kb.pressing('a')) {
+	// if (kb.pressing('left') || kb.pressing('a')) {
+	if (pressedKeys.a) {
 		slime.changeAni('left');
 		slime.vel.x = -5;
-		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
-			slime.vel.y = -5; 
-		} 
-		if (slime.colliding(ladder1)) {
-			world.gravity.y = 0;
-			slime.vel.y = 0;
-			slime.vel.x = 0;
-		}
-	} else if (kb.pressing('right') || kb.pressing('d')) {
+	// } else if (kb.pressing('right') || kb.pressing('d')) {
+	} 
+	if (pressedKeys.d) {
 		slime.changeAni('right');
 		slime.vel.x = 5;
-		if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
-			slime.vel.y = -5; 
-		}
-		if (slime.colliding(ladder1)) {
-			world.gravity.y = 0;
-			slime.vel.y = 0;
-			slime.vel.x = 0;
-		}
-	} else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+
+	// } else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+	}
+	if ((pressedKeys.w) && (slime.colliding(floor) || slime.colliding(platforms))) {
 		slime.vel.y = -5; 
 	} else if (slime.colliding(ladder1)) {
 		// world.gravity.y = 0;
 		slime.vel.y = 0;
 		slime.vel.x = 0;
-		if (kb.pressing('up') || kb.pressing('w') || kb.pressing('space')) {
-			// world.gravity.y = 10;
-			slime.vel.y = -3;
-		}
+
+	// } else if ((kb.pressing('left') || kb.pressing('a')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
+	// } else if ((kb.pressing('left') || kb.pressing('a')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
+	// 	slime.vel.y = -5; 
+	} else if ((pressedKeys.a) && (slime.colliding(ladder1))) {
+		world.gravity.y = 0;
+		slime.vel.y = 0;
+		slime.vel.x = 0;
+	} else if ((kb.pressing('right') || kb.pressing('d')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+		slime.vel.y = -5; 
+	} else if (kb.pressing('right') || kb.pressing('d') && (slime.colliding(ladder1))) {
+		world.gravity.y = 0;
+		slime.vel.y = 0;
+		slime.vel.x = 0;
+	} else if ((slime.colliding(ladder1)) && (kb.pressing('up') || kb.pressing('w') || kb.pressing('space'))) {
+		// world.gravity.y = 10;
+		slime.vel.y = -3;
+	} else if ((slime.colliding(ladder1)) && (kb.pressing('down') || kb.pressing('s') || kb.pressing('shift'))) {
+		// world.gravity.y = 10;
+		slime.vel.y = -3;
 	} else {
 		slime.changeAni('idle');
 		slime.vel.x = 0;
@@ -111,4 +127,13 @@ function draw() {
 	// 	// slime.vel.x = 0;
 	// }
 
+}
+
+
+function keyPressed() {
+	pressedKeys[key] = true;
+}
+
+function keyReleased() {
+	delete pressedKeys[key];
 }
