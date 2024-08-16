@@ -1,7 +1,7 @@
 let slime, floor;
 let platforms, platform1, platform2;
 let ladders, ladder1;
-let pressedKeys = {};
+let activeKeys;
 let slimeSpeed = 5;
 
 function preload() {
@@ -65,8 +65,14 @@ function setup() {
 function draw() {
 	background('skyblue');
 
+	activeKeys = {
+		[UP_ARROW]: false,
+		[RIGHT_ARROW]: false,
+		[DOWN_ARROW]: false,
+		[LEFT_ARROW]: false
+	  };
 	textSize(20);
-	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}\n${pressedKeys}`, 10, 30);
+	text(`${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}\n${activeKeys}`, 10, 30);
 	
 	slime.debug = mouse.pressing();
 	ladder1.debug = mouse.pressing();
@@ -75,49 +81,89 @@ function draw() {
 	// 	slime.speed = 10;
 	// 	slime.moveTo(mouse);
 	// }
-	
+	// if (kb.pressing('left')) player.vel.x = -5;
+	// else if (kb.pressing('right')) player.vel.x = 5;
+	// else if (kb.pressed('up') && (slime.colliding(floor) || slime.colliding(platforms))) slime.vel.y = -5;
+	// else if (slime.colliding(ladder1)) { slime.vel.y = 0; slime.vel.x = 0; }
+	// else if (kb.pressing('left') && (slime.colliding(ladder1))) { world.gravity.y = 0; slime.vel.y = 0; slime.vel.x = 0; }
+	// else player.vel.x = 0;
 	// if (kb.pressing('left') || kb.pressing('a')) {
-	if (pressedKeys.a) {
-		slime.changeAni('left');
-		slime.vel.x = -5;
-	// } else if (kb.pressing('right') || kb.pressing('d')) {
-	} 
-	if (pressedKeys.d) {
-		slime.changeAni('right');
-		slime.vel.x = 5;
 
-	// } else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+	slime.draw() 
+	// UP KEYS COMBO
+	if (activeKeys[UP_ARROW] && activeKeys[RIGHT_ARROW]) {
+		// slime.setSpeed(2.5, 315);
+		slime.speed = 2.5;
+	} else if (activeKeys[UP_ARROW] && activeKeys[LEFT_ARROW]) {
+		slime.setSpeed(2.5, 225);
 	}
-	if ((pressedKeys.w) && (slime.colliding(floor) || slime.colliding(platforms))) {
-		slime.vel.y = -5; 
-	} else if (slime.colliding(ladder1)) {
-		// world.gravity.y = 0;
-		slime.vel.y = 0;
-		slime.vel.x = 0;
+	// DOWN KEYS COMBO
+	else if (activeKeys[DOWN_ARROW] && activeKeys[RIGHT_ARROW]) {
+		slime.setSpeed(2.5, 45);
+	} else if (activeKeys[DOWN_ARROW] && activeKeys[LEFT_ARROW]) {
+		slime.setSpeed(2.5, 135);
+	}
+	// SINGLE KEYS
+	else if (activeKeys[UP_ARROW]) {
+		slime.setSpeed(2.5, 270);
+	} else if (keyCode == DOWN_ARROW) {
+		slime.setSpeed(2.5, 90);
+	} else if (keyCode == LEFT_ARROW) {
+		slime.setSpeed(2.5, 180);
+	} else if (keyCode == RIGHT_ARROW) {
+		slime.setSpeed(2.5, 0);
+	}
+		  
+			
+		  
+		  
 
-	// } else if ((kb.pressing('left') || kb.pressing('a')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
-	// } else if ((kb.pressing('left') || kb.pressing('a')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
+	// //start
+	// if (kb.pressing('left')) {
+	// 	slime.changeAni('left');
+	// 	slime.vel.x = -5;
+	// // } else if (kb.pressing('right') || kb.pressing('d')) {
+	// } 
+	// else if (kb.pressing('right')) {
+	// 	slime.changeAni('right');
+	// 	slime.vel.x = 5;
+
+	// // } else if ((kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+	// }
+	// else if ((kb.pressed('up')) && (slime.colliding(floor) || slime.colliding(platforms))) {
 	// 	slime.vel.y = -5; 
-	} else if ((pressedKeys.a) && (slime.colliding(ladder1))) {
-		world.gravity.y = 0;
-		slime.vel.y = 0;
-		slime.vel.x = 0;
-	} else if ((kb.pressing('right') || kb.pressing('d')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
-		slime.vel.y = -5; 
-	} else if (kb.pressing('right') || kb.pressing('d') && (slime.colliding(ladder1))) {
-		world.gravity.y = 0;
-		slime.vel.y = 0;
-		slime.vel.x = 0;
-	} else if ((slime.colliding(ladder1)) && (kb.pressing('up') || kb.pressing('w') || kb.pressing('space'))) {
-		// world.gravity.y = 10;
-		slime.vel.y = -3;
-	} else if ((slime.colliding(ladder1)) && (kb.pressing('down') || kb.pressing('s') || kb.pressing('shift'))) {
-		// world.gravity.y = 10;
-		slime.vel.y = -3;
-	} else {
-		slime.changeAni('idle');
-		slime.vel.x = 0;
-	}
+	// } else if (slime.colliding(ladder1)) {
+	// 	// world.gravity.y = 0;
+	// 	slime.vel.y = 0;
+	// 	slime.vel.x = 0;
+
+	// // } else if ((kb.pressing('left')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
+
+	// } else if ((kb.pressing('left')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))) {
+	// 	slime.vel.y = -5; 
+	// 	slime.vel.x = -5
+	// } else if ((kb.pressing('left')) && (slime.colliding(ladder1))) {
+	// 	world.gravity.y = 0;
+	// 	slime.vel.y = 0;
+	// 	slime.vel.x = 0;
+	// } else if ((kb.pressing('right') || kb.pressing('d')) && (kb.presses('up') || kb.presses('w') || kb.presses('space')) && (slime.colliding(floor) || slime.colliding(platforms))){
+	// 	slime.vel.y = -5; 
+	// 	slime.vel.x = 5;
+	// } else if (kb.pressing('right') || kb.pressing('d') && (slime.colliding(ladder1))) {
+	// 	world.gravity.y = 0;
+	// 	slime.vel.y = 0;
+	// 	slime.vel.x = 0;
+	// } else if ((slime.colliding(ladder1)) && (kb.pressing('up') || kb.pressing('w') || kb.pressing('space'))) {
+	// 	// world.gravity.y = 10;
+	// 	slime.vel.y = -3;
+	// } else if ((slime.colliding(ladder1)) && (kb.pressing('down') || kb.pressing('s') || kb.pressing('shift'))) {
+	// 	// world.gravity.y = 10;
+	// 	slime.vel.y = -3;
+	// } else {
+	// 	slime.changeAni('idle');
+	// 	slime.vel.x = 0;
+	// }
+	// //end
 	// } else if (kb.presses('up') || kb.presses('w') || kb.presses('space')) {
 	// 	slime.vel.y = 9;
 	// }
@@ -131,9 +177,13 @@ function draw() {
 
 
 function keyPressed() {
-	pressedKeys[key] = true;
+	if (activeKeys[keyCode] === false) {
+	  activeKeys[keyCode] = true;
+	}
 }
 
 function keyReleased() {
-	delete pressedKeys[key];
+	if (activeKeys[keyCode]) {
+		activeKeys[keyCode] = false;
+	}
 }
